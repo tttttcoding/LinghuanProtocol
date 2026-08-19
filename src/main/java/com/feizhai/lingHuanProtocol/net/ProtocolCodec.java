@@ -37,7 +37,7 @@ public class ProtocolCodec {
      * @param byteBuf
      * @return
      */
-    public Command decodeInPaper(ByteBuf byteBuf){
+    public Command<?> decodeInPaper(ByteBuf byteBuf){
         Package packageType = Package.getPackage(VarIntUtil.readVarInt(byteBuf));
         if(packageType == null) throw new ProtocolException("协议版本有误，请更新mod");
         if(packageType.getDirection() == Direction.SERVER_TO_CLIENT) throw new ProtocolException("包方向有误");
@@ -49,7 +49,7 @@ public class ProtocolCodec {
      * @param byteBuf
      * @return
      */
-    public Command decodeInForge(ByteBuf byteBuf,int packageId){
+    public Command<?> decodeInForge(ByteBuf byteBuf,int packageId){
         Package packageType = Package.getPackage(packageId);
         if(packageType == null) throw new ProtocolException("协议版本有误，请更新mod");
         if(packageType.getDirection() == Direction.CLIENT_TO_SERVER) throw new ProtocolException("包方向有误");
@@ -61,7 +61,7 @@ public class ProtocolCodec {
      * @param byteBuf
      * @return
      */
-    private Command decode(ByteBuf byteBuf,Package packageType){
+    private <T extends Payload> Command<T> decode(ByteBuf byteBuf,Package packageType){
         validateProtocolVersion(byteBuf);
         int commandId = VarIntUtil.readVarInt(byteBuf);
         CommandType commandType = CommandType.getCommandType(packageType.getPackageId(),commandId);

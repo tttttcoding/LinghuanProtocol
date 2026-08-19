@@ -11,8 +11,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public enum CommandType {
-    OPEN_MENU(Package.CLIENT_STRING_COMMAND_PACKAGE,1, StringCommandPayload.class,StringCommandPayload::new),
-    BACK_TO_SPAWN(Package.CLIENT_STRING_COMMAND_PACKAGE,2, StringCommandPayload.class,StringCommandPayload::new)
+    OPEN_MENU(Package.CLIENT_STRING_COMMAND_PACKAGE,1,StringCommandPayload::new),
+    BACK_TO_SPAWN(Package.CLIENT_STRING_COMMAND_PACKAGE,2, StringCommandPayload::new)
     ;
     private static final Map<Integer, Map<Integer,CommandType>> COMMAND_MAP = Arrays.stream(CommandType.values())
             .map(commandType -> commandType.getPackageType().getPackageId())
@@ -27,13 +27,11 @@ public enum CommandType {
                     ));
     private Package packageType;
     private int commandId;
-    private Class<? extends Payload> payloadClass;
     private Function<ByteBuf, Payload> payloadFactory;
 
-    CommandType(Package packageType, int commandId,Class<? extends Payload> payloadClass,Function<ByteBuf, Payload> payloadFactory) {
+    CommandType(Package packageType, int commandId,Function<ByteBuf, Payload> payloadFactory) {
         this.packageType = packageType;
         this.commandId = commandId;
-        this.payloadClass = payloadClass;
         this.payloadFactory = payloadFactory;
     }
     public Payload buildPayload(ByteBuf byteBuf){
@@ -51,9 +49,5 @@ public enum CommandType {
     }
     public int getCommandId() {
         return commandId;
-    }
-
-    public Class<? extends Payload> getPayloadClass() {
-        return payloadClass;
     }
 }

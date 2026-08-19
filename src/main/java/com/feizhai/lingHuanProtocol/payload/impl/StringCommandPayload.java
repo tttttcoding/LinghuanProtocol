@@ -18,10 +18,13 @@ public class StringCommandPayload implements Payload {
     public StringCommandPayload(String content){
         this.content = content;
     }
-
     public void encode(ByteBuf byteBuf) {
         byte[] bytes = content.getBytes(StandardCharsets.UTF_8);
         byteBuf.writeByte(bytes.length);
         byteBuf.writeBytes(bytes);
+    }
+
+    public String getContent() {
+        return content;
     }
 }
