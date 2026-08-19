@@ -1,9 +1,26 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>com.feizhai.LingHuanProtocol</groupId>
-  <artifactId>LingHuanProtocol</artifactId>
+  <groupId>com.feizhai</groupId>
+  <artifactId>linghuan-protocol</artifactId>
   <version>1.0-SNAPSHOT</version>
-  <name>Archetype - LingHuanProtocol</name>
+  <name>LingHuanProtocol</name>
   <url>http://maven.apache.org</url>
+
+
+  <distributionManagement>
+    <repository>
+      <id>github</id>
+      <name>LinghuanProtocol</name>
+      <url>https://maven.pkg.github.com/tttttcoding/LinghuanProtocol</url>
+    </repository>
+  </distributionManagement>
+
+  <dependencies>
+    <dependency>
+      <groupId>io.netty</groupId>
+      <artifactId>netty-buffer</artifactId>
+      <version>4.1.118.Final</version>
+    </dependency>
+  </dependencies>
 </project>
