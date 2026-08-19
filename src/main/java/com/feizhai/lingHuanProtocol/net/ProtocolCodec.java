@@ -40,19 +40,32 @@ public class ProtocolCodec {
     public Command decodeInPaper(ByteBuf byteBuf){
         Package packageType = Package.getPackage(VarIntUtil.readVarInt(byteBuf));
         if(packageType == null) throw new ProtocolException("协议版本有误，请更新mod");
+        if(packageType.getDirection() == Direction.SERVER_TO_CLIENT) throw new ProtocolException("包方向有误");
         return decode(byteBuf, packageType);
     }
 
     /**
-     * 收包（Forge端用）
+     * 收包（Forge端专用）
      * @param byteBuf
      * @return
      */
-    public Command decode(ByteBuf byteBuf,Package packageType){
+    public Command decodeInForge(ByteBuf byteBuf,int packageId){
+        Package packageType = Package.getPackage(packageId);
+        if(packageType == null) throw new ProtocolException("协议版本有误，请更新mod");
+        if(packageType.getDirection() == Direction.CLIENT_TO_SERVER) throw new ProtocolException("包方向有误");
+        return decode(byteBuf, packageType);
+    }
+
+    /**
+     * 收包
+     * @param byteBuf
+     * @return
+     */
+    private Command decode(ByteBuf byteBuf,Package packageType){
         validateProtocolVersion(byteBuf);
         int commandId = VarIntUtil.readVarInt(byteBuf);
         CommandType commandType = CommandType.getCommandType(packageType.getPackageId(),commandId);
-        Payload payload = packageType.buildPayload(byteBuf);
+        Payload payload = commandType.buildPayload(byteBuf);
         return new Command(commandType,payload);
     }
 
@@ -61,15 +74,28 @@ public class ProtocolCodec {
      * @param byteBuf
      */
     public void encodeInPaper(ByteBuf byteBuf,Command command){
-        VarIntUtil.writeVarInt(byteBuf,command.getType().getPackageType().getPackageId());
+        Package packageType = command.getType().getPackageType();
+        if(packageType.getDirection() == Direction.CLIENT_TO_SERVER) throw new ProtocolException("该包不允许服务端发送");
+        VarIntUtil.writeVarInt(byteBuf,packageType.getPackageId());
         encode(byteBuf,command);
     }
+
     /**
-     * 发包（Forge端用）
+     * 发包（Forge端专用）
      * @param byteBuf
      * @param command
      */
-    public void encode(ByteBuf byteBuf,Command command){
+    public void encodeInForge(ByteBuf byteBuf,Command command){
+        Package packageType = command.getType().getPackageType();
+        if(packageType.getDirection() == Direction.SERVER_TO_CLIENT) throw new ProtocolException("该包不允许客户端发送");
+        encode(byteBuf,command);
+    }
+    /**
+     * 发包
+     * @param byteBuf
+     * @param command
+     */
+    private void encode(ByteBuf byteBuf,Command command){
         VarIntUtil.writeVarInt(byteBuf,Protocol.PROTOCOL_VERSION);
         CommandType commandType = command.getType();
         VarIntUtil.writeVarInt(byteBuf,commandType.getCommandId());
