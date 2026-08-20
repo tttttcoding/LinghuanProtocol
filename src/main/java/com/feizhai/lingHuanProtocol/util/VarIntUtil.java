@@ -1,6 +1,7 @@
 package com.feizhai.lingHuanProtocol.util;
 
 
+import com.feizhai.lingHuanProtocol.exception.ProtocolException;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
@@ -20,6 +21,7 @@ public class VarIntUtil {
         int result = 0x00;
         int index = 0;
         for(;;){
+            if(index>=5) throw new ProtocolException("VarInt解码错误");
             byte b = byteBuf.readByte();
             result |= ((b & 0x7F) << (index++)*7);
             if(b >> 7 == 0) break;

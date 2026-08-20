@@ -16,6 +16,7 @@ public enum CommandType {
     ;
     private static final Map<Integer, Map<Integer,CommandType>> COMMAND_MAP = Arrays.stream(CommandType.values())
             .map(commandType -> commandType.getPackageType().getPackageId())
+            .distinct()
             .collect(Collectors.toMap(
                     packageId -> packageId,
                     packageId -> Arrays.stream(CommandType.values())
